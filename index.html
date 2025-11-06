@@ -96,7 +96,11 @@
             color: var(--cor-placeholder);
         }
 
-        .cabecalho-form input:focus {
+        /* MUDANÇA: Estilo focado para o input de número (que agora é type=text) */
+        .cabecalho-form input[type="text"]:focus,
+        .cabecalho-form input[type="number"]:focus,
+        .cabecalho-form input[type="time"]:focus,
+        #numeroInput:focus {
             border-color: var(--cor-primaria);
             box-shadow: 0 0 0 0.2rem rgba(127, 90, 240, 0.25);
             outline: none;
@@ -247,15 +251,16 @@
             pointer-events: none;
         }
 
+        /* Container para o Input de número e o botão "OK" */
         .input-group {
             display: flex;
             gap: 10px;
-            align-items: stretch;
+            align-items: stretch; 
             margin-bottom: 10px;
         }
 
         #numeroInput {
-            flex-grow: 1;
+            flex-grow: 1; 
             width: 100%;
             padding: 20px;
             margin-bottom: 0; 
@@ -457,7 +462,7 @@
         </div>
 
         <div class="aviso">
-            Digite o número inteiro no campo abaixo.
+            Digite o número e aperte **Enter** no teclado ou o botão **OK**.
         </div>
 
         <p id="mensagemErro" class="aviso erro"></p>
@@ -466,7 +471,7 @@
         <p id="mensagemConclusao" class="aviso">COLETA CONCLUÍDA!</p>
         
         <div class="input-group">
-            <input type="text" id="numeroInput" placeholder="Número" pattern="[0-9]*" inputmode="numeric" autofocus>
+            <input type="text" id="numeroInput" placeholder="Número" pattern="\d*" inputmode="numeric" autofocus>
             
             <button id="btnSubmitNumero" onclick="processarEntrada()">OK</button>
         </div>
@@ -789,6 +794,9 @@
             }
         });
 
+        // A lógica do 'processarEntrada' continua a mesma,
+        // pois ela já valida se o valor é um número
+        // A função é chamada pelo 'Enter' ou pelo clique no "OK"
         function processarEntrada() {
             mensagemErro.textContent = ''; 
             
@@ -802,13 +810,8 @@
             if (valor === '00000') return alternarPausa();
 
             if (valor !== '') {
-                // MUDANÇA: Como agora é um campo de texto, 
-                // validamos se é um número *antes* de tentar parseInt.
-                if (!/^[0-9]+$/.test(valor)) {
-                    mensagemErro.textContent = 'Por favor, digite apenas números inteiros.';
-                    return;
-                }
-                
+                // A validação parseInt() continua funcionando
+                // mesmo com type="text"
                 const numero = parseInt(valor);
 
                 if (dados.length >= MAX_DADOS_REAL) {
@@ -819,7 +822,7 @@
                 
                 if (!isNaN(numero)) {
                     dados.push(numero);
-                    input.value = ''; 
+                    input.value = ''; // Limpa o campo
                     
                     const novoItem = document.createElement('p');
                     novoItem.textContent = `${dados.length}. ${numero}`;
